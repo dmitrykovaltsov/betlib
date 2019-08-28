@@ -16,9 +16,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -197,6 +197,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function hasDuplicates(array) {
+  return new Set(array).size !== array.length;
+}
+
 // Calculate a simple combination bet
 function combinationBet(n) {
   return function (allSelections, returns, isEachWay) {
@@ -209,9 +213,16 @@ function combinationBet(n) {
         selections[_key] = arguments[_key];
       }
 
+      // TODO: Change logic
+      var ids = selections.map(function (item) {
+        return item.id;
+      });
+      if (hasDuplicates(ids)) {
+        return;
+      }
       // Calculate win returns
       if (selections.every(function (selection) {
-        return selection.appliesToWinMarket();
+        return selection.appliesToWinMarket() && selection.avaible;
       })) {
         returns.addBetReturn(selections.reduce(function (acc, selection) {
           return acc * selection.winMarketReturns();
@@ -386,7 +397,11 @@ var WinSelection = exports.WinSelection = function (_Selection) {
         _ref$placeOddsFractio = _ref.placeOddsFraction,
         placeOddsFraction = _ref$placeOddsFractio === undefined ? '1/1' : _ref$placeOddsFractio,
         _ref$rule = _ref.rule4,
-        rule4 = _ref$rule === undefined ? 0 : _ref$rule;
+        rule4 = _ref$rule === undefined ? 0 : _ref$rule,
+        _ref$avaible = _ref.avaible,
+        avaible = _ref$avaible === undefined ? true : _ref$avaible,
+        _ref$id = _ref.id,
+        id = _ref$id === undefined ? '' : _ref$id;
 
     _classCallCheck(this, WinSelection);
 
@@ -394,6 +409,8 @@ var WinSelection = exports.WinSelection = function (_Selection) {
 
     _this.winOdds = winOdds;
     _this.rule4 = rule4;
+    _this.avaible = avaible;
+    _this.id = id;
 
     var _placeOddsFraction$sp = placeOddsFraction.split('/'),
         _placeOddsFraction$sp2 = _slicedToArray(_placeOddsFraction$sp, 2),

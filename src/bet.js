@@ -3,6 +3,10 @@ import * as errors from './errors.js';
 
 import foreachCombination from 'foreach-combination';
 
+function hasDuplicates(array) {
+  return (new Set(array)).size !== array.length;
+}
+
 // Calculate a simple combination bet
 function combinationBet(n) {
   return (allSelections, returns, isEachWay) => {
@@ -11,8 +15,13 @@ function combinationBet(n) {
     }
 
     foreachCombination(allSelections, n, (...selections) => {
+      // TODO: Change logic
+      const ids = selections.map(item => item.id)
+      if (hasDuplicates(ids)) {
+        return
+      }
       // Calculate win returns
-      if (selections.every(selection => selection.appliesToWinMarket())) {
+      if (selections.every(selection => selection.appliesToWinMarket() && selection.avaible)) {
         returns.addBetReturn(selections.reduce(
           (acc, selection) => acc * selection.winMarketReturns(),
           returns.unitStake));

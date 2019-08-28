@@ -21,11 +21,13 @@ class Selection {
 }
 
 export class WinSelection extends Selection {
-  constructor({winOdds, placeOddsFraction = '1/1', rule4 = 0}) {
+  constructor({winOdds, placeOddsFraction = '1/1', rule4 = 0, avaible = true, id = ''}) {
     super();
 
     this.winOdds = winOdds;
     this.rule4 = rule4;
+    this.avaible = avaible;
+    this.id = id
 
     let [num, denom] = placeOddsFraction.split('/');
     const decimalPlaceOddsFraction = parseInt(num) / parseInt(denom);
@@ -84,10 +86,10 @@ export class DeadHeatSelection extends WinSelection {
   appliesToWinMarket() { return this.tiedPosition === 1; }
   appliesToPlaceMarket() { return true; }
 
-  winMarketReturns() { 
+  winMarketReturns() {
     return this.unitReturns(this.winOdds) / this.runnersInDeadHeat;
   }
-  placeMarketReturns() { 
+  placeMarketReturns() {
     let returns = this.unitReturns(this.placeOdds);
     let sharedPayingPlaces = this.placesOffered - this.tiedPosition + 1;
     if (sharedPayingPlaces < this.runnersInDeadHeat) {
